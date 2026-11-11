@@ -468,3 +468,13 @@ revoke execute on function public.get_contact(uuid)          from public, anon;
 grant execute on function public.accept_join_request(uuid)  to authenticated;
 grant execute on function public.decline_join_request(uuid) to authenticated;
 grant execute on function public.get_contact(uuid)          to authenticated;
+
+-- Hardening: trigger functions are never called directly; helpers are only for signed in users
+alter function public.is_utah_email(text) set search_path = '';
+revoke execute on function public.enforce_utah_email() from public, anon, authenticated;
+revoke execute on function public.profiles_set_email() from public, anon, authenticated;
+revoke execute on function public.on_team_created() from public, anon, authenticated;
+revoke execute on function public.is_team_owner(uuid) from public, anon;
+revoke execute on function public.is_on_team_in_hackathon(uuid, uuid) from public, anon;
+grant execute on function public.is_team_owner(uuid) to authenticated;
+grant execute on function public.is_on_team_in_hackathon(uuid, uuid) to authenticated;
